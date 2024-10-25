@@ -1,5 +1,4 @@
 const db = require("../db/database");
-
 const createContact = (
   name,
   email,
