@@ -1,4 +1,5 @@
 const db = require("../db/database");
+
 const createContact = (
   name,
   email,
@@ -19,11 +20,9 @@ const getContacts = (userId, callback) => {
 
 const updateContact = (id, updates, callback) => {
   const { name, email, phone, address, timezone } = updates;
-  const query = `
-    UPDATE contacts
-    SET name = ?, email = ?, phone = ?, address = ?, timezone = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ? AND deleted_at IS NULL
-  `;
+  const query = `UPDATE contacts
+     SET name = ?, email = ?, phone = ?, address = ?, timezone = ?, updated_at = CURRENT_TIMESTAMP
+     WHERE id = ? AND deleted_at IS NULL`;
   db.run(query, [name, email, phone, address, timezone, id], callback);
 };
 
