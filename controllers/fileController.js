@@ -1,6 +1,6 @@
 const csv = require("csv-parser");
 const fs = require("fs");
-const xlsx = require("xlsx");
+const ExcelJS = require("exceljs");
 const { createContact } = require("../models/contactModel");
 
 const importCSV = (filePath, callback) => {
@@ -12,10 +12,23 @@ const importCSV = (filePath, callback) => {
 };
 
 const importExcel = (filePath, callback) => {
-  const workbook = xlsx.readFile(filePath);
-  const sheetName = workbook.SheetNames[0];
-  const contacts = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-  callback(contacts);
+  const workbook = new ExcelJS.Workbook();
+  workbook.xlsx
+    .readFile(filePath)
+    .then(() => {
+      const sheet = workbook.getWorksheet(1);
+      sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        contacts.push({
+          name: row.getCell(1).value,
+          email: row.getCell(2).value,
+          phone: row.getCell(3).value,
+          address: row.getCell(4).value,
+          timezone: row.getCell(5).value,
+        });
+      });
+      callback(contacts);
+    })
+    .catch((err) => console.error("Error reading Excel file:", err));
 };
 
 const processContacts = (contacts) => {
